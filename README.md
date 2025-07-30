@@ -4,7 +4,13 @@ A bitwise proof of the Collatz Conjecture via tail collapse analysis. The least 
 
 ## Paper
 
-"A Bitwise Structural Proof of the Collatz Conjecture" - [link to arXiv when available]
+"A Bitwise Structural Proof of the Collatz Conjecture"
+
+### Available Formats
+
+- **Published Version**: [Zenodo DOI: 10.5281/zenodo.16617039](https://zenodo.org/records/16617039)
+- **With Line Numbers**: [PDF](paper/with_line_numbers/Bitwise_Structural_Proof_of_the_Collatz_Conjecture.pdf)
+- **Without Line Numbers**: [PDF](paper/without_line_numbers/Bitwise_Structural_Proof_of_the_Collatz_Conjecture.pdf)
 
 ## Verification Code
 
