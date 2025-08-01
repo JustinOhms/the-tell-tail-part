@@ -22,13 +22,13 @@ def analyze_k_bit_odd_permutations(k):
     print(f"\nAnalyzing odd numbers 1 to {end-1} (k={k}):\n")
     header1 = f"{'Decimal':<8} {'Binary':<{k+2}} "
     header2 = f"{'Win After':<10} {'Max Bits':<10} "
-    header3 = f"{'Head Grow':<10} {'Total Tail':<10} "
+    header3 = f"{'Head Grow':<10} {'Extra Zeros':<12} "
     header4 = f"{'End Dec':<8} {'End Bin':<{k+2}}"
     print(header1 + header2 + header3 + header4)
     
     sep1 = f"{'-'*8} {'-'*(k+2)} "
     sep2 = f"{'-'*10} {'-'*10} "
-    sep3 = f"{'-'*10} {'-'*10} "
+    sep3 = f"{'-'*10} {'-'*12} "
     sep4 = f"{'-'*8} {'-'*(k+2)}"
     print(sep1 + sep2 + sep3 + sep4)
     
@@ -68,9 +68,13 @@ def analyze_k_bit_odd_permutations(k):
             prev_bits = current_bits
             max_bits = max(max_bits, current_bits)
 
-            if (zeros_stripped > iterations and 
+            # Calculate extra zeros beyond the guaranteed minimum
+            # Every iteration removes at least 1 zero, so extra_zeros = total - iterations
+            extra_zeros = zeros_stripped - iterations
+            
+            if (extra_zeros > 0 and 
                 tail_win_iteration is None):
-                # Record when tail collapse outpaces iterations
+                # Record when extra tail collapse dominates
                 tail_win_iteration = iterations  
                 break
 
@@ -98,31 +102,35 @@ def analyze_k_bit_odd_permutations(k):
             win_after = f"{tail_win_iteration}"
         
         # Print details for this number
-        binary_repr = format(orig_n, f'0{k}b')
-        line1 = f"{orig_n:<8} {binary_repr:<{k+2}} "
-        line2 = f"{win_after:<10} {max_bits:<10} "
-        line3 = f"{head_growth_count:<10} {total_tail_bits:<10} "
-        line4 = f"{ending_number:<8} {ending_binary:<{k+2}}"
-        print(line1 + line2 + line3 + line4)
+        # Calculate extra zeros for display
+        extra_zeros_display = zeros_stripped - iterations if tail_win_iteration else zeros_stripped - iterations
+        
+        # Print details for this number
+        col1 = f"{orig_n:<8} {format(orig_n, f'0{k}b'):<{k+2}} "
+        col2 = f"{win_after:<10} {max_bits:<10} "
+        col3 = f"{head_growth_count:<10} {extra_zeros_display:<12} "
+        col4 = f"{ending_number:<8} {ending_binary:<{k+2}}"
+        print(col1 + col2 + col3 + col4)
         
     # Report summary results
     print("\nSummary:")
     if failures:
         msg1 = f"Found {len(failures)} out of {total_numbers} "
-        msg2 = "odd numbers where tail collapse did not "
-        msg3 = "outpace head growth:"
+        msg2 = "odd numbers where extra zeros (beyond guaranteed minimum) "
+        msg3 = "did not exceed zero:"
         print(msg1 + msg2 + msg3)
         
         for (decimal, bits, zeros, iters, max_bits, 
              head_growth, total_tail, end_dec, end_bin) in failures:
+            extra_zeros = zeros - iters
             info1 = f"Decimal: {decimal}, Binary: {bits}, "
-            info2 = f"Zeros: {zeros}, Iterations: {iters}, "
-            info3 = f"Max Bits: {max_bits}, "
-            info4 = f"Total Tail: {total_tail}"
+            info2 = f"Total Zeros: {zeros}, Iterations: {iters}, "
+            info3 = f"Extra Zeros: {extra_zeros}, Max Bits: {max_bits}, "
+            info4 = f"Head Growth: {head_growth}"
             print(info1 + info2 + info3 + info4)
     else:
-        msg1 = f"All {total_numbers} odd numbers showed "
-        msg2 = "tail collapse outpacing head growth."
+        msg1 = f"All {total_numbers} odd numbers exhibited "
+        msg2 = "extra zero dominance (removing more zeros than the guaranteed minimum)!"
         print(msg1 + msg2)
 
 if __name__ == "__main__":
